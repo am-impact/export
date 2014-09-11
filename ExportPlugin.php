@@ -11,7 +11,7 @@ class ExportPlugin extends BasePlugin
 
     function getVersion()
     {
-        return '0.2.2';
+        return '0.2.3';
     }
 
     function getDeveloper()
@@ -27,17 +27,6 @@ class ExportPlugin extends BasePlugin
     function hasCpSection()
     {
         return true;
-    }
-    
-    function registerUnitTest() 
-    {
-    
-        // Import the test
-        Craft::import('plugins.export.tests.ExportTest');
-        
-        // Return the test
-        return new ExportTest();
-    
     }
     
 }
