@@ -29,4 +29,15 @@ class ExportPlugin extends BasePlugin
         return true;
     }
     
+    function registerUnitTest() 
+    {
+    
+        // Import the test
+        Craft::import('plugins.export.tests.ExportTest');
+        
+        // Return the test
+        return new ExportTest();
+    
+    }
+    
 }
