@@ -29,50 +29,40 @@ class ExportController extends BaseController
     public function actionMap() 
     {
     
-        // Only post requests
-        $this->requirePostRequest();
+        // Get import post
+        $export = craft()->request->getRequiredPost('export');
         
         // Create token
         $token = craft()->tokens->createToken(array('action' => 'export/download'));
             
         // Send variables to template and display
-        $this->renderTemplate('export/map', array(
-            'exportToken' => $token
+        $this->renderTemplate('export/_map', array(
+            'exportToken' => $token,
+            'export' => $export
         ));
     
     }
     
-    // Start import task
+    // Download export
     public function actionDownload() 
     {
     
         // We need a token for this
         $this->requireToken();
         
-        // Only post requests
-        $this->requirePostRequest();
-        
-        // Get element type
-        $type = craft()->request->getParam('type');
-        
-        // Entries / get section
-        $section = craft()->request->getParam('section');
-        $entrytype = craft()->request->getParam('entrytype');
-        
-        // Users / get groups
-        $groups = craft()->request->getParam('groups');
+        // Get export post
+        $settings = craft()->request->getRequiredPost('export');
         
         // Get mapping fields
         $map = craft()->request->getParam('fields');
         
-        // Get data
-        $data = craft()->export->download(array(
-            'type' => $type,
-            'section' => $section,
-            'entrytype' => $entrytype,
-            'groups' => $groups,
+        // Set more settings
+        $settings = array_merge(array(
             'map' => $map
-        ));
+        ), $settings);
+        
+        // Get data
+        $data = craft()->export->download($settings);
         
         // Download the csv
         craft()->request->sendFile('export.csv', $data, array('forceDownload' => true, 'mimeType' => 'text/csv'));

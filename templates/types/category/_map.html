@@ -1,24 +1,12 @@
-{# Users #}
-{% set exportGroups = craft.request.getParam('groups') %}
-
-<form method="post" action="{{ actionUrl('export/download', {'token': exportToken}) }}" class="centered" accept-charset="UTF-8">
-    <input type="hidden" name="type" value="{{ exportType }}">
-    {% for group in exportGroups %}
-    <input type="hidden" name="groups[]" value="{{ group }}">
-    {% endfor %}
-                   
-    <p>{{ "Choose which fields you want to export."|t }}</p>
-    
-    {% set fieldLayout = craft.fields.getLayoutByType(exportType) %}
+{% set fieldLayout = craft.fields.getLayoutByType(export.type) %}
+               
+<p>{{ "Choose which fields you want to export."|t }}</p>
            
-    <table class="data">
+<table class="data fullwidth sortable">
+    <tbody>
     {% set staticfields = {
         "elementId": "ID"|t,
-        "username": "Username"|t,
-        "firstName": "First Name"|t,
-        "lastName": "Last Name"|t,
-        "email": "Email"|t,
-        "status": "Status"|t
+        "title": "Title"|t
     } %}
     {% for handle, name in staticfields if name %}
         <tr>
@@ -59,8 +47,10 @@
             </td>
         </tr>
     {% endfor %}
+    </tbody>
+    <tfoot>
         <tr>
             <td colspan="2" style="border-bottom: none"><input type="submit" class="btn submit" value="{{ 'Export'|t }}"></td>
         </tr>
-    </table>
-</form>
+    </thead>
+</table>

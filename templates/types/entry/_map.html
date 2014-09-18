@@ -1,18 +1,10 @@
-{# Entries #}
-{% set exportSection = craft.request.getParam('exportSection') %}
-{% set exportEntryType = craft.request.getParam('exportEntryType') %}
+{% set entrytypes = craft.sections.getSectionById(export.elementvars.section).getEntryTypes() %}
+        
+<p>{{ "Choose which fields you want to export."|t }}</p>
 
-<form method="post" action="{{ actionUrl('export/download', {'token': exportToken}) }}" class="centered" accept-charset="UTF-8">
-    <input type="hidden" name="type" value="{{ exportType }}">
-    <input type="hidden" name="section" value="{{ exportSection }}">
-    <input type="hidden" name="entrytype" value="{{ exportEntryType }}">
-    
-    {% set entrytypes = craft.sections.getSectionById(exportSection).getEntryTypes() %}
-            
-    <p>{{ "Choose which fields you want to export."|t }}</p>
-    
-    <table class="data">
-{% for entrytype in entrytypes if entrytype.id == exportEntryType %}
+<table class="data fullwidth sortable">
+    <tbody>
+{% for entrytype in entrytypes %}
     {% set staticfields = {
         "elementId": "ID"|t,
         "title": entrytype.hasTitleField ? entrytype.titleLabel : false,
@@ -65,8 +57,10 @@
         {% endfor %}
     {% endfor %}
 {% endfor %}
+    </tbody>
+    <tfoot>
         <tr>
             <td colspan="2" style="border-bottom: none"><input type="submit" class="btn submit" value="{{ 'Export'|t }}"></td>
         </tr>
-    </table>
-</form>
+    </tfoot>
+</table>

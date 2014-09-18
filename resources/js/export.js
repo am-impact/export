@@ -5,15 +5,18 @@ $(function() {
         // Show the fields that match the export type
         $('#types').change(function() {
         
-            $('.type').hide();
-            $('.' + $(this).val().toLowerCase()).show();     
+            $('.type').hide().find('input, select').prop('disabled', true);
+            $('.' + $(this).val().toLowerCase()).show().find('input, select').prop('disabled', false);     
             
         });
+        
+        // Trigger change on load
+        $('#types').trigger('change');
 
         // Find entry types by chosen section
-        $('#sections').change(function() {
+        $(document).on('change', '#sections', function() {
         
-            $('#entrytypes').html('');
+            $('#entrytypes').html('<option value="">' + Craft.t('All') + '</option>');
             Craft.postActionRequest('export/getEntryTypes', { 'section': $(this).val() }, function(entrytypes) {
                     
                 $.each(entrytypes, function(index, value) {
@@ -24,6 +27,18 @@ $(function() {
             
         });
         
+    }
+    
+    if($('table.sortable tbody').length) {
+        
+        // Set an absolute width
+        $('table.sortable td').each(function() {
+            $(this).width($(this).width()).css('cursor', 'move');
+        });
+            
+        // Enable sorting
+        $('table.sortable tbody').sortable().disableSelection();
+    
     }
     
 });
