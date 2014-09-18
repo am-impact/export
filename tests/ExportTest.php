@@ -60,10 +60,13 @@ class ExportTest extends \WebTestCase
         $result = $this->post(
             str_replace('admin/', '', UrlHelper::getActionUrl('export/download', array('token' => $token))),
             array(
-                'type' => $type,
-                'section' => $section,
-                'entrytype' => $entrytype,
-                'groups' => null,
+                'export' => array(
+                    'type' => $type,
+                    'elementvars' => array(
+                        'section' => $section,
+                        'entrytype' => $entrytype
+                    )
+                ),
                 'fields' => $fields
             )
         );
@@ -117,10 +120,12 @@ class ExportTest extends \WebTestCase
         $result = $this->post(
             str_replace('admin/', '', UrlHelper::getActionUrl('export/download', array('token' => $token))),
             array(
-                'type' => $type,
-                'section' => null,
-                'entrytype' => null,
-                'groups' => $groups,
+                'export' => array(
+                    'type' => $type,
+                    'elementvars' => array(
+                        'groups' => $groups
+                    )
+                ),
                 'fields' => $fields
             )
         );
