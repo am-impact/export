@@ -6,6 +6,33 @@ class ExportService extends BaseApplicationComponent
 
     private $_service;
     public $delimiter = ExportModel::DelimiterComma;
+    
+    public function saveMap($settings, $map)
+    {
+    
+        // Set criteria
+        $criteria = new \CDbCriteria;
+        $criteria->condition = 'settings = :settings';
+        $criteria->params = array(
+            ':settings' => JsonHelper::encode($settings)
+        );
+        
+        // Check if we have a map already
+        $mapRecord = Export_MapRecord::model()->find($criteria);
+        
+        if(!count($mapRecord) || $mapRecord->settings != $settings) {
+    
+            // Save settings and map to database
+            $mapRecord           = new Export_MapRecord();
+            $mapRecord->settings = $settings;
+
+        }
+        
+        // Save new map to db
+        $mapRecord->map = $map;
+        $mapRecord->save(false);
+                    
+    }
 
     public function download($settings) 
     {
@@ -38,7 +65,7 @@ class ExportService extends BaseApplicationComponent
                 
                 // Put down columns
                 if(!$rows) {
-                    $row .= $this->parseColumns($settings, $fields);
+                    $row .= $this->parseColumns($settings, $element, $fields);
                 }
             
                 // Loop trough the fields
@@ -132,13 +159,13 @@ class ExportService extends BaseApplicationComponent
         }
         
         // Loop through the map
-        foreach($map as $handle => $checked) {
+        foreach($map as $handle => $data) {
         
             // Only get checked fields
-            if($checked == '1' && array_key_exists($handle, $attributes)) {
+            if($data['checked'] == '1' && (array_key_exists($handle, $attributes) || array_key_exists(substr($handle, 0, 5), $attributes))) {
             
                 // Fill them with data
-                $fields[$handle] = $attributes[$handle];
+                $fields[$handle] = substr($handle, 0, 5) == ExportModel::HandleTitle ? $attributes['title'] : $attributes[$handle];
             
             }
         
@@ -149,7 +176,7 @@ class ExportService extends BaseApplicationComponent
     }
     
     // Parse column names
-    protected function parseColumns($settings, $fields) 
+    protected function parseColumns($settings, $element, $fields) 
     {
     
         $columns = "";
@@ -182,7 +209,7 @@ class ExportService extends BaseApplicationComponent
                         break;
                         
                     default:
-                        $columns .= $class->parseColumn($handle, $settings, $this->delimiter);
+                        $columns .= $class->parseColumn($handle, $element, $settings, $this->delimiter);
                         break;
                 
                 }

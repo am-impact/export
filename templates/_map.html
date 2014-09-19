@@ -24,7 +24,39 @@
             {% endif %}
         {% endfor %}
         
-        {% include 'export/types/' ~ export.type|lower ~ '/_map' %}
+        <p>{{ "Choose which fields you want to export."|t }}</p>
+        
+        <table class="data fullwidth sortable">
+            <tbody>
+        {% set fields = craft.export.getFields(export.type) %}
+        {% for handle, data in fields %}
+            <tr>
+                <td>
+                    <div class="field">
+                        <div class="heading">
+                            <label>{{ data.name }}</label>
+                            <input type="hidden" name="fields[{{ handle }}][name]" value="{{ data.name }}">
+                            {% if handle == 'title' %}<input type="hidden" name="fields[title][entrytype]" value="{{ data.entrytype }}">{% endif %}
+                        </div>
+                    </div>
+                </td>
+                <td>
+                    {{ forms.checkboxField({
+                        label: 'Include in export'|t,
+                        instructions: "This value will be included in the export file."|t,
+                        name: "fields[" ~ handle ~ "][checked]",
+                        checked: data.checked
+                    }) }}
+                </td>
+            </tr>
+        {% endfor %}
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="2" style="border-bottom: none"><input type="submit" class="btn submit" value="{{ 'Export'|t }}"></td>
+                </tr>
+            </tfoot>
+        </table>
         
     </form>
 {% endset %}

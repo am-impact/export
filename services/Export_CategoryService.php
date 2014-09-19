@@ -12,6 +12,45 @@ class Export_CategoryService extends BaseApplicationComponent
     
     }
     
+    public function getFields($settings)
+    {
+    
+        // Set criteria
+        $criteria = new \CDbCriteria;
+        $criteria->condition = 'settings = :settings';
+        $criteria->params = array(
+            ':settings' => JsonHelper::encode($settings)
+        );
+        
+        // Check if we have a map already
+        $stored = Export_MapRecord::model()->find($criteria);
+                
+        if(!count($stored)) {
+       
+            // Set the static fields for this type
+            $fields = array(
+                ExportModel::HandleId    => array('name' => Craft::t("ID"), 'checked' => 0),
+                ExportModel::HandleTitle => array('name' => Craft::t("Title"), 'checked' => 1)
+            );
+            
+            // Set the dynamic fields for this type
+            foreach(craft()->fields->getLayoutByType(ElementType::Category)->getFields() as $field) {
+                $data = $field->getField();
+                $fields[$data->handle] = array('name' => $data->name, 'checked' => 1);
+            }
+            
+        } else {
+        
+            // Get the stored map        
+            $fields = $stored->map;
+        
+        }
+        
+        // Return fields
+        return $fields;
+    
+    }
+    
     public function setCriteria($settings)
     {
     
@@ -27,7 +66,7 @@ class Export_CategoryService extends BaseApplicationComponent
     
     }
     
-    public function parseColumn($handle, $settings, $delimiter)
+    public function parseColumn($handle, $element, $settings, $delimiter)
     {
     
         // If not found, use handle
