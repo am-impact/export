@@ -78,7 +78,7 @@ class ExportService extends BaseApplicationComponent
                     $data = $this->parseFieldData($handle, $data);
                 
                     // Put in quotes and escape
-                    $row .= '"'.addslashes($data).'"'.$this->delimiter;
+                    $row .= '"'.addcslashes($data, '"').'"'.$this->delimiter;
                 
                 }
                 
@@ -158,6 +158,20 @@ class ExportService extends BaseApplicationComponent
             $attributes = $element;
         }
         
+        // Get parent for categories/structures
+        if(array_key_exists(ExportModel::HandleParent, $map)) {
+            if($element->getAncestors()) {
+                $attributes[ExportModel::HandleParent] = $element->getAncestors(1)->first();
+            }
+        }
+        
+        // Get ancestors for categories/structures
+        if(array_key_exists(ExportModel::HandleAncestors, $map)) {
+            if($element->getAncestors()) {
+                $attributes[ExportModel::HandleAncestors] = implode('/', $element->getAncestors()->find());
+            }
+        }
+        
         // Loop through the map
         foreach($map as $handle => $data) {
         
@@ -203,6 +217,14 @@ class ExportService extends BaseApplicationComponent
                     case ExportModel::HandleId:
                         $columns .= '"'.Craft::t("ID").'"'.$this->delimiter;
                         break;
+                        
+                    case ExportModel::HandleParent:
+                        $columns .= '"'.Craft::t("Parent").'"'.$this->delimiter;
+                        break;
+                        
+                    case ExportModel::HandleAncestors:
+                        $columns .= '"'.Craft::t("Ancestors").'"'.$this->delimiter;
+                        break;
                 
                     case ExportModel::HandleStatus:
                         $columns .= '"'.Craft::t("Status").'"'.$this->delimiter;
@@ -216,7 +238,7 @@ class ExportService extends BaseApplicationComponent
             
             } else {
             
-                $columns .= '"'.addslashes($field->name).'"'.$this->delimiter;
+                $columns .= '"'.addcslashes($field->name, '"').'"'.$this->delimiter;
             
             }
                     
@@ -324,6 +346,12 @@ class ExportService extends BaseApplicationComponent
                         
                         }
                         
+                        break;
+                        
+                    case ExportModel::FieldTypeTable:
+                    
+                        $data = StringHelper::arrayToString($data);
+                    
                         break;
                
                 }
