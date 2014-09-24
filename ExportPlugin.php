@@ -11,7 +11,7 @@ class ExportPlugin extends BasePlugin
 
     function getVersion()
     {
-        return '0.3.2';
+        return '0.4.0';
     }
 
     function getDeveloper()
@@ -38,6 +38,13 @@ class ExportPlugin extends BasePlugin
         // Return the test
         return new ExportTest();
     
+    }
+    
+    function registerUserPermissions()
+    {
+        return array(
+            'reset' => array('label' => Craft::t('Reset export map'))
+        );
     }
     
 }

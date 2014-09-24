@@ -22,7 +22,7 @@ class Export_EntryService extends BaseApplicationComponent
     
     }
     
-    public function getFields($settings)
+    public function getFields($settings, $reset)
     {
     
         // Set criteria
@@ -35,7 +35,7 @@ class Export_EntryService extends BaseApplicationComponent
         // Check if we have a map already
         $stored = Export_MapRecord::model()->find($criteria);
                 
-        if(!count($stored)) {
+        if(!count($stored) || $reset) {
                    
             // Get section id
             $section = $settings['elementvars']['section'];
@@ -117,51 +117,6 @@ class Export_EntryService extends BaseApplicationComponent
         $criteria->type      = $settings['elementvars']['entrytype'];
     
         return $criteria;
-    
-    }
-    
-    public function parseColumn($handle, $element, $settings, $delimiter)
-    {
-    
-        // If not found, use handle
-        $column = $handle;
-        
-        // Parse title
-        if(substr($handle, 0, 5) == ExportModel::HandleTitle) {
-            $id     = substr($handle, 6);
-            $handle = ExportModel::HandleTitle;
-        }
-        
-        switch($handle) {
-    
-            case ExportModel::HandleTitle:
-                $entrytype = craft()->sections->getEntryTypeById($id);
-                $column = '"'.($entrytype ? addcslashes($entrytype->titleLabel, '"') : Craft::t("Title")).'"'.$delimiter;
-                break;
-                
-            case ExportModel::HandleAuthor:
-                $column = '"'.Craft::t("Author").'"'.$delimiter;
-                break;
-                
-            case ExportModel::HandlePostDate:
-                $column = '"'.Craft::t("Post Date").'"'.$delimiter;
-                break;
-                
-            case ExportModel::HandleExpiryDate:
-                $column = '"'.Craft::t("Expiry Date").'"'.$delimiter;
-                break;
-                
-            case ExportModel::HandleEnabled:
-                $column = '"'.Craft::t("Enabled").'"'.$delimiter;
-                break;
-                
-            case ExportModel::HandleSlug:
-                $column = '"'.Craft::t("Slug").'"'.$delimiter;
-                break;
-                
-        }
-        
-        return $column;
     
     }
     

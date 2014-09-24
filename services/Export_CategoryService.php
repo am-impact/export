@@ -12,7 +12,7 @@ class Export_CategoryService extends BaseApplicationComponent
     
     }
     
-    public function getFields($settings)
+    public function getFields($settings, $reset)
     {
     
         // Set criteria
@@ -25,7 +25,7 @@ class Export_CategoryService extends BaseApplicationComponent
         // Check if we have a map already
         $stored = Export_MapRecord::model()->find($criteria);
                 
-        if(!count($stored)) {
+        if(!count($stored) || $reset) {
        
             // Set the static fields for this type
             $fields = array(
@@ -66,28 +66,6 @@ class Export_CategoryService extends BaseApplicationComponent
         $criteria->groupId = $settings['elementvars']['group'];
     
         return $criteria;
-    
-    }
-    
-    public function parseColumn($handle, $element, $settings, $delimiter)
-    {
-    
-        // If not found, use handle
-        $column = $handle;
-        
-        switch($handle) {
-    
-            case ExportModel::HandleTitle:
-                $column = '"'.Craft::t("Title").'"'.$delimiter;
-                break;
-                
-            case ExportModel::HandleSlug:
-                $column = '"'.Craft::t("Slug").'"'.$delimiter;
-                break;
-                
-        }
-        
-        return $column;
     
     }
     

@@ -31,7 +31,7 @@ class Export_UserService extends BaseApplicationComponent
     
     }
     
-    public function getFields($settings)
+    public function getFields($settings, $reset)
     {
     
         // Set criteria
@@ -44,7 +44,7 @@ class Export_UserService extends BaseApplicationComponent
         // Check if we have a map already
         $stored = Export_MapRecord::model()->find($criteria);
                 
-        if(!count($stored)) {
+        if(!count($stored) || $reset) {
        
             // Set the static fields for this type
             $fields = array(
@@ -86,36 +86,6 @@ class Export_UserService extends BaseApplicationComponent
         $criteria->groupId = $settings['elementvars']['groups'];
         
         return $criteria;
-    
-    }
-    
-    public function parseColumn($handle, $element, $settings, $delimiter)
-    {
-    
-        // If not found, use handle
-        $column = $handle;
-    
-        switch($handle) {
-    
-            case ExportModel::HandleUsername:
-                $column = '"'.Craft::t("Username").'"'.$delimiter;
-                break;
-                
-            case ExportModel::HandleFirstName:
-                $column = '"'.Craft::t("First Name").'"'.$delimiter;
-                break;
-                
-            case ExportModel::HandleLastName:
-                $column = '"'.Craft::t("Last Name").'"'.$delimiter;
-                break;
-                
-            case ExportModel::HandleEmail:
-                $column = '"'.Craft::t("Email").'"'.$delimiter;
-                break;
-            
-        }
-        
-        return $column;
     
     }
     
