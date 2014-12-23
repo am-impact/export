@@ -48,6 +48,7 @@ class ExportService extends BaseApplicationComponent
 
         // Get data
         $data = $this->getData($settings);
+        $this->setDelimiter($settings);
 
         // If there is data, process
         if(count($data)) {
@@ -81,12 +82,22 @@ class ExportService extends BaseApplicationComponent
                     $row .= '"'.addcslashes($data, '"').'"'.$this->delimiter;
 
                 }
+                if($this->delimiter == ExportModel::DelimiterTab)
+                {
+                    $row = substr($row, 0, -2);
 
-                // Remove last comma
-                $row = substr($row, 0, -1);
+                }
+                else {
+                    // Remove last delimiter
+                    $row = substr($row, 0, -1);
+                }
 
                 // Encode row
                 $row = StringHelper::convertToUTF8($row);
+                if($this->delimiter == ExportModel::DelimiterTab)
+                {
+                    $row = str_replace("\\t", "\t", $row);
+                }
 
                 // And start a new line
                 $row = $row . "\r\n";
@@ -98,12 +109,36 @@ class ExportService extends BaseApplicationComponent
                 $rows++;
 
             }
-
         }
 
         // Return the data to controller
         return $export;
 
+    }
+
+    private function setDelimiter($settings)
+    {
+        if (isset($settings['elementvars']['delimiter']) && $settings['elementvars']['delimiter'] != '' )
+        {
+            $delimiter = $settings['elementvars']['delimiter'];
+            switch ($delimiter)
+            {
+                case 'semicolon':
+                    $this->delimiter = ExportModel::DelimiterSemicolon;
+                    break;
+               case 'comma':
+                    $this->delimiter = ExportModel::DelimiterComma;
+                    break;
+                case 'pipe':
+                    $this->delimiter = ExportModel::DelimiterPipe;
+                    break;
+                case 'tab':
+                    $this->delimiter = ExportModel::DelimiterTab;
+                    break;
+                default:
+                    break;
+            }
+        }
     }
 
     protected function getData($settings)
@@ -198,8 +233,14 @@ class ExportService extends BaseApplicationComponent
 
         }
 
-        // Remove last comma
-        $columns = substr($columns, 0, -1);
+        if($this->delimiter == ExportModel::DelimiterTab)
+        {
+            $columns = substr($columns, 0, -2);
+        }
+        else {
+            // Remove last delimiter
+            $columns = substr($columns, 0, -1);
+        }
 
         // Encode columns
         $columns = StringHelper::convertToUTF8($columns);

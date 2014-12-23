@@ -3,7 +3,7 @@ namespace Craft;
 
 class ExportModel extends BaseModel
 {
-     
+
     // Handles
     const HandleStatus       = 'status';
     const HandleId           = 'elementId';
@@ -21,17 +21,18 @@ class ExportModel extends BaseModel
     const HandleFirstName    = 'firstName';
     const HandleLastName     = 'lastName';
     const HandleEmail        = 'email';
-    
+
     // Fieldtypes
     const FieldTypeEntries     = 'Entries';
     const FieldTypeCategories  = 'Categories';
     const FieldTypeAssets      = 'Assets';
     const FieldTypeUsers       = 'Users';
     const FieldTypeLightswitch = 'Lightswitch';
-    
+
     // Delimiters
     const DelimiterSemicolon = ';';
     const DelimiterComma     = ',';
     const DelimiterPipe      = '|';
-    
+    const DelimiterTab       = '\t';
+
 }
