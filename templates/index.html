@@ -92,9 +92,14 @@
                         </div>
                     </td>
                     <td>
-                        <div class="field checkbox">
-                            <input type="hidden" name="reset" value="">
-                            <input type="checkbox" value="1" class="checkbox" name="reset">
+                        <div class="field">
+                        {{ forms.checkboxField({
+                            label: '',
+                            name: "reset",
+                            checked: false,
+                            value: 1,
+                            disabled: false
+                        }) }}
                         </div>
                     </td>
                 </tr>
