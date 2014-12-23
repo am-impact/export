@@ -77,6 +77,16 @@ class ExportService extends BaseApplicationComponent
 
                     // Parse field data
                     $data = $this->parseFieldData($handle, $data);
+                    if(is_numeric($data))
+                    {
+                        $dotPosition = strrpos($data,'.');
+                        $decimals = 0;
+                        if($dotPosition > -1)
+                        {
+                            $decimals = strlen(substr($data, $dotPosition)) -1;
+                        }
+                        $data = number_format($data,$decimals,',','.');
+                    }
 
                     // Put in quotes and escape
                     $row .= '"'.addcslashes($data, '"').'"'.$this->delimiter;
