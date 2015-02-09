@@ -179,6 +179,17 @@ class ExportService extends BaseApplicationComponent
                 $relatedTo[] = array('targetElement' =>$settings['elementvars']['filterRelatedCategory'], 'field'=> null);
                 $criteria->relatedTo = $relatedTo;
             }
+            if (isset($settings['elementvars']['filterStatus']) && $settings['elementvars']['filterStatus'] != '' )
+            {
+                if($settings['elementvars']['filterStatus'] == 'onlyEnabled')
+                {
+                    $criteria->status = EntryModel::LIVE;
+                }
+                if($settings['elementvars']['filterStatus'] == 'onlyDisabled')
+                {
+                    $criteria->status = BaseElementModel::DISABLED;
+                }
+            }
             // Gather data
             $data = $criteria->find();
         }

@@ -60,26 +60,43 @@
                 </td>
             </tr>
         {% endfor %}
+
+            {% set doExportEntries = export.type == 'Entry' %}
             {% set categoriesByGroup = craft.categories.limit(null).order('title asc') |group('groupId') %}
-            {% if categoriesByGroup|length %}
+            {% if categoriesByGroup|length or doExportEntries %}
                 <tr>
-                    <td colspan="3">{{ "Filters"|t }}</td>
+                        <td colspan="3">{{ "Filters"|t }}</td>
                 </tr>
-                <tr>
-                    <td>{{ "Filter by category."|t }}</td>
-                    <td colspan="2">
-                        <select name="export[elementvars][filterRelatedCategory]">
-                        {% for categoryGroupId, categoryData in categoriesByGroup %}
-                             <option value="">{{ 'None'|t }}</option>
-                             {% if categoriesByGroup|length > 1 %}<optgroup label="==">{% endif %}
-                                {% for category in categoryData %}
-                                <option value="{{ category.id }}">{{ category.title }}</option>
-                                {% endfor %}
-                             {% if categoriesByGroup|length > 1 %}</optgroup>{% endif %}
-                        </select>
-                        {% endfor %}
-                    </td>
-                </tr>
+                {% if doExportEntries %}
+                    <tr>
+                        <td>{{ "Filter by status."|t }}</td>
+                        <td colspan="2">
+                            <select name="export[elementvars][filterStatus]">
+                                <option value="">All</option>
+                                <option value="onlyEnabled">{{ 'Only enabled' |t }}</option>
+                                <option value="onlyDisabled">{{ 'Only disabled' |t }}</option>
+                            </select>
+
+                        </td>
+                    </tr>
+                {% endif %}
+                {% if categoriesByGroup|length %}
+                    <tr>
+                        <td>{{ "Filter by category."|t }}</td>
+                        <td colspan="2">
+                            <select name="export[elementvars][filterRelatedCategory]">
+                            {% for categoryGroupId, categoryData in categoriesByGroup %}
+                                 <option value="">{{ 'None'|t }}</option>
+                                 {% if categoriesByGroup|length > 1 %}<optgroup label="==">{% endif %}
+                                    {% for category in categoryData %}
+                                    <option value="{{ category.id }}">{{ category.title }}</option>
+                                    {% endfor %}
+                                 {% if categoriesByGroup|length > 1 %}</optgroup>{% endif %}
+                            </select>
+                            {% endfor %}
+                        </td>
+                    </tr>
+                {% endif %}
             {% endif %}
             </tbody>
             <tfoot>
